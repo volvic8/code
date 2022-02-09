@@ -5,7 +5,7 @@ import os
 
 print(os.getcwd())
 
-df = pd.read_excel(r"C:\work\data\sample.xlsx", sheet_name=0, index_col=0)
+df = pd.read_excel(r"..\..\..\data\sample.xlsx", sheet_name=0, index_col=0)
 print(df)
 
 # 行, 列
