@@ -14,7 +14,7 @@
     <textarea id="preparing" rows="8" cols="100">SELECT * FROM tbl01 WHERE col1 = ? AND col2 = ? AND col3 = ?</textarea>
     <br>
     <p>Parameters:</p>
-    <textarea id="parameters" rows="4" cols="100">val1(String), val2(String), val3</textarea>
+    <textarea id="parameters" rows="4" cols="100">val1(String), val2(Date), val3</textarea>
     <br>
     <button onclick="generateSQL()">Generate</button>
     <p>SQL:</p>
@@ -22,23 +22,24 @@
 
     <script>
         function generateSQL() {
-            let sql = document.getElementById("preparing").value;
-            let parameters = document.getElementById("parameters").value;
+            let sql = document.getElementById("preparing").value.replace("Preparing:", "").trim();
+            const parameters = document.getElementById("parameters").value.replace("Parameters:", "").trim();
+            const regex = /\((String|Date)\)$/;
 
             parameters.split(',').forEach(value => {
                 value = value.trim();
-                if (value.includes("(String)") || value.includes("(Date)")) {
-                    value = "'" + value.replace("(String)", "").replace("(Date)", "")+ "'";
+                if (regex.test(value)) {
+                    value = "'" + value.replace(regex, "") + "'";
                 }
                 sql = sql.replace("?", value);
             });
 
             if (!sql.endsWith(";")) {
-                sql = sql + ";"
+                sql += ";"
             }
-
             document.getElementById("sql").value = sql;
         }
+
     </script>
 </body>
 
