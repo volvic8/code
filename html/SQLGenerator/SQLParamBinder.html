@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQLParamBinder</title>
+</head>
+
+<body>
+    <h1>SQLParamBinder</h1>
+    <p>Preparing:</p>
+    <textarea id="preparing" rows="8" cols="100">SELECT * FROM tbl01 WHERE col1 = ? AND col2 = ? AND col3 = ?</textarea>
+    <br>
+    <p>Parameters:</p>
+    <textarea id="parameters" rows="4" cols="100">val1(String), val2(String), val3</textarea>
+    <br>
+    <button onclick="generateSQL()">Generate</button>
+    <p>SQL:</p>
+    <textarea id="sql" rows="10" cols="100"></textarea>
+
+    <script>
+        function generateSQL() {
+            let sql = document.getElementById("preparing").value;
+            let parameters = document.getElementById("parameters").value;
+
+            parameters.split(',').forEach(value => {
+                value = value.trim();
+                if (value.includes("(String)") || value.includes("(Date)")) {
+                    value = "'" + value.replace("(String)", "").replace("(Date)", "")+ "'";
+                }
+                sql = sql.replace("?", value);
+            });
+
+            if (!sql.endsWith(";")) {
+                sql = sql + ";"
+            }
+
+            document.getElementById("sql").value = sql;
+        }
+    </script>
+</body>
+
+</html>
