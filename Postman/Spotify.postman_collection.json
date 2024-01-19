@@ -1,0 +1,121 @@
+{
+	"info": {
+		"_postman_id": "2c9a8fa4-93a9-4f21-b14e-875318d9b741",
+		"name": "Spotify",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25269877",
+		"_collection_link": "https://galactic-water-392016.postman.co/workspace/Team-Workspace~3297038f-030c-4cca-8363-0caadabbb563/collection/25269877-2c9a8fa4-93a9-4f21-b14e-875318d9b741?action=share&source=collection_link&creator=25269877"
+	},
+	"item": [
+		{
+			"name": "getArtist",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/v1/artists/4tZwfgrHOc3mvqYlEYSvVi",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v1",
+						"artists",
+						"4tZwfgrHOc3mvqYlEYSvVi"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "searchArtist",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/v1/search?q=Daft+Punk&type=artist",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v1",
+						"search"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "Daft+Punk"
+						},
+						{
+							"key": "type",
+							"value": "artist"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// 前回発行したアクセストークンの有効期限が切れている場合のみ、再発行する",
+					"if((new Date() - Date.parse(pm.environment.get(\"access_token_post_at\"))) >= pm.environment.get(\"expires_in\")) {",
+					"    pm.sendRequest({",
+					"        url: 'https://accounts.spotify.com/api/token', ",
+					"        method: 'POST',",
+					"        header: {",
+					"            'Content-Type': 'application/x-www-form-urlencoded',",
+					"        },",
+					"        body:'grant_type=client_credentials'",
+					"            + '&client_id=' + pm.environment.get(\"client_id\")",
+					"            + '&client_secret=' + pm.environment.get(\"client_secret\")",
+					"    }, function (err, res) {",
+					"            pm.environment.set(\"access_token\", res.json().access_token);",
+					"            pm.environment.set(\"expires_in\", res.json().expires_in);",
+					"            pm.environment.set(\"access_token_post_at\", new Date());",
+					"    });",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

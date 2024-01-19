@@ -23,7 +23,7 @@
         function generateSQL() {
             let sql = document.getElementById("preparing").value.replace("Preparing:", "").trim();
             const parameters = document.getElementById("parameters").value.replace("Parameters:", "").trim();
-            const regex = /\((String|Date)\)$/;
+            const regex = /\((String|Date|LocalDate|OffsetDateTime)\)$/;
 
             parameters.split(',').forEach(value => {
                 value = value.trim();
