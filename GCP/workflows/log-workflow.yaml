@@ -1,0 +1,11 @@
+  - step1:
+      assign:
+          - varA: "Hello"
+          - varB: "World"
+  - logStep:
+      call: sys.log
+      args:
+          text: "LOG!!!"
+          severity: ERROR 
+  - step2:
+      return: ${varA + " " + varB}

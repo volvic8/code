@@ -1,4 +1,9 @@
 # https://cloud.google.com/workflows/docs/reference/syntax/catching-errors
+  - logStep:
+      call: sys.log
+      args:
+          text: "LOG!!!"
+          severity: ERROR 
   - read_item:
       try:
           call: http.get
