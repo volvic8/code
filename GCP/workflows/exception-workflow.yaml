@@ -1,0 +1,22 @@
+# https://cloud.google.com/workflows/docs/reference/syntax/catching-errors
+  - read_item:
+      try:
+          call: http.get
+          args:
+              url: https://host.com/api
+          result: api_response
+      except:
+          as: e
+          steps:
+              - known_errors:
+                  switch:
+                  - condition: ${not("HttpError" in e.tags)}
+                    return: "Connection problem."
+                  - condition: ${e.code == 404}
+                    return: "Sorry, URL wasn’t found."
+                  - condition: ${e.code == 403}
+                    return: "Authentication error."
+              - unhandled_exception:
+                  raise: ${e}
+  - url_found:
+      return: ${api_response.body}
