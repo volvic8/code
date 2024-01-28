@@ -1,0 +1,18 @@
+main:
+    params: [args]
+    steps:
+    - checkHoliday:
+        steps:
+        - init:
+            assign:
+                - now: ${time.format(sys.now(), "Asia/Tokyo")}
+                - year: ${int(text.substring(now, 0, 4))}
+                - month: ${int(text.substring(now, 5, 7))}
+                - day: ${int(text.substring(now, 8, 10))}
+        - logStep:
+            call: sys.log
+            args:
+                text: ${day}
+                severity: ERROR
+        - returnStep:
+            return: ${day}

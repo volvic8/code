@@ -1,27 +1,33 @@
 # https://cloud.google.com/workflows/docs/reference/syntax/catching-errors
+main:
+  params: [args]
+  steps:
+  - initVariables:
+      assign:
+        - errval: "Hello, World"  # 文字列を代入
   - logStep:
       call: sys.log
       args:
-          text: "LOG!!!"
-          severity: ERROR 
+        text: "LOG!!!"
+        severity: ERROR 
   - read_item:
       try:
-          call: http.get
-          args:
-              url: https://host.com/api
-          result: api_response
+        call: http.get
+        args:
+          url: https://host.com/api
+        result: api_response
       except:
-          as: e
-          steps:
-              - known_errors:
-                  switch:
-                  - condition: ${not("HttpError" in e.tags)}
-                    return: "Connection problem."
-                  - condition: ${e.code == 404}
-                    return: "Sorry, URL wasn’t found."
-                  - condition: ${e.code == 403}
-                    return: "Authentication error."
-              - unhandled_exception:
-                  raise: ${e}
-  - url_found:
-      return: ${api_response.body}
+        as: e
+        steps:
+        - seterrval:
+            assign:
+              - errval: ${e}
+        - known_errors:
+            switch:
+              - condition: ${e.code == 403}
+                # return: ${e}
+                next: returnErr
+        - unhandled_exception:
+            raise: ${e}
+  - returnErr:
+      return: ${text.substring(string(errval.message),1,3)}
