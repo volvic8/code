@@ -2,32 +2,32 @@
 main:
   params: [args]
   steps:
-  - initVariables:
-      assign:
-        - errval: "Hello, World"  # 文字列を代入
-  - logStep:
-      call: sys.log
-      args:
-        text: "LOG!!!"
-        severity: ERROR 
-  - read_item:
-      try:
-        call: http.get
+    - initVariables:
+        assign:
+          - errval: "Hello, World" # 文字列を代入
+    - logStep:
+        call: sys.log
         args:
-          url: https://host.com/api
-        result: api_response
-      except:
-        as: e
-        steps:
-        - seterrval:
-            assign:
-              - errval: ${e}
-        - known_errors:
-            switch:
-              - condition: ${e.code == 403}
-                # return: ${e}
-                next: returnErr
-        - unhandled_exception:
-            raise: ${e}
-  - returnErr:
-      return: ${text.substring(string(errval.message),1,3)}
+          text: "LOG!!!"
+          severity: ERROR
+    - read_item:
+        try:
+          call: http.get
+          args:
+            url: https://host.com/api
+          result: api_response
+        except:
+          as: e
+          steps:
+            - seterrval:
+                assign:
+                  - errval: ${e}
+            - known_errors:
+                switch:
+                  - condition: ${e.code == 403}
+                    # return: ${e}
+                    next: returnErr
+            - unhandled_exception:
+                raise: ${e}
+    - returnErr:
+        return: ${text.substring(string(errval.message),1,3)}
