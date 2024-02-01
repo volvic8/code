@@ -1,0 +1,21 @@
+version: '3'
+services:
+  pubdb01:
+    image: postgres
+    container_name: pubdb01
+    restart: always
+    ports:
+      - 54321:5432
+    environment:
+      POSTGRES_DB: pubdb01
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+  subdb01:
+    image: postgres
+    container_name: subdb01
+    ports:
+      - 54322:5432
+    environment:
+      POSTGRES_DB: subdb01
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
