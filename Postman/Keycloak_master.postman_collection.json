@@ -1,0 +1,155 @@
+{
+	"info": {
+		"_postman_id": "8e713d75-5958-4913-96ca-6433cf91868a",
+		"name": "Keycloak_master",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25269877",
+		"_collection_link": "https://galactic-water-392016.postman.co/workspace/Team-Workspace~3297038f-030c-4cca-8363-0caadabbb563/collection/25269877-8e713d75-5958-4913-96ca-6433cf91868a?action=share&source=collection_link&creator=25269877"
+	},
+	"item": [
+		{
+			"name": "user取得",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{keycloak_access_token}}",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{keycloak_base_url}}/admin/realms/{{keycloak_client_realm}}/users?username=testuser01",
+					"host": [
+						"{{keycloak_base_url}}"
+					],
+					"path": [
+						"admin",
+						"realms",
+						"{{keycloak_client_realm}}",
+						"users"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "testuser01"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ユーザー登録",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"credentials\": [\r\n        {\r\n            \"temporary\": false,\r\n            \"type\": \"password\",\r\n            \"value\": \"test-password\"\r\n        }\r\n    ],\r\n    \"username\": \"test-user2\",\r\n    \"firstName\": \"test\",\r\n    \"lastName\": \"user\",\r\n    \"email\": \"test-user2@test.com\",\r\n    \"emailVerified\": false,\r\n    \"enabled\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{keycloak_base_url}}/admin/realms/{{keycloak_client_realm}}/users",
+					"host": [
+						"{{keycloak_base_url}}"
+					],
+					"path": [
+						"admin",
+						"realms",
+						"{{keycloak_client_realm}}",
+						"users"
+					],
+					"query": [
+						{
+							"key": "Authorization",
+							"value": "Bearer {{keycloak_master_access_token}}",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ユーザー削除",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{keycloak_base_url}}/admin/realms/{{keycloak_client_realm}}/users/86ca8f2f-bd01-4e69-a74b-4dc57c1403e7",
+					"host": [
+						"{{keycloak_base_url}}"
+					],
+					"path": [
+						"admin",
+						"realms",
+						"{{keycloak_client_realm}}",
+						"users",
+						"86ca8f2f-bd01-4e69-a74b-4dc57c1403e7"
+					],
+					"query": [
+						{
+							"key": "Authorization",
+							"value": "Bearer {{keycloak_master_access_token}}",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{keycloak_master_access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// 前回発行したアクセストークンの有効期限が切れている場合のみ、再発行する",
+					"if((new Date() - Date.parse(pm.environment.get(\"keycloak_master_access_token_post_at\"))) >= pm.environment.get(\"keycloak_master_expires_in\")) {",
+					"    pm.sendRequest({",
+					"        url: pm.environment.get(\"keycloak_base_url\") + '/realms/master/protocol/openid-connect/token', ",
+					"        method: 'POST',",
+					"        header: {",
+					"            'Content-Type': 'application/x-www-form-urlencoded',",
+					"        },",
+					"        body:'grant_type=password'",
+					"            + '&client_id=admin-cli'",
+					"            + '&username=admin'",
+					"            + '&password=admin'",
+					"            + '&client_secret=' + pm.environment.get(\"keycloak_master_client_secret\")",
+					"    }, function (err, res) {",
+					"            pm.environment.set(\"keycloak_master_access_token\", res.json().access_token);",
+					"            pm.environment.set(\"keycloak_master_expires_in\", res.json().expires_in);",
+					"            pm.environment.set(\"keycloak_master_access_token_post_at\", new Date());",
+					"    });",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
