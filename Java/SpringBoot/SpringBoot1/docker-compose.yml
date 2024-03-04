@@ -1,7 +1,7 @@
 version: '3.6'
 services:
   app:
-    image: openjdk:15
+    image: openjdk:21
     ports:
       - 8080:8080
     tty: true
