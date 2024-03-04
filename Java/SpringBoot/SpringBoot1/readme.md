@@ -7,3 +7,7 @@ bash-4.4# pwd
 bash-4.4# microdnf install findutils
 bash-4.4# sh gradlew build
 bash-4.4# java -jar build/libs/api-0.0.1-SNAPSHOT.jar
+
+curl http://localhost:8080/test -X GET
+curl http://localhost:8080/test/json -X GET
+curl http://localhost:8080/test/post -X POST -H 'Content-Type: application/json' -d '{"value1":"hoge","value2":"fuga"}'
